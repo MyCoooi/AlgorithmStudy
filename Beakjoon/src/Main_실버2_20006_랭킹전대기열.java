@@ -3,6 +3,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class Main_실버2_20006_랭킹전대기열 {
 
@@ -38,24 +39,35 @@ public class Main_실버2_20006_랭킹전대기열 {
 	
 	public static void main(String[] args) throws Exception {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
 		
 		// 입력 받기
 		String split [] = in.readLine().split(" ");
 		p = Integer.parseInt(split[0]);
 		m = Integer.parseInt(split[1]);
 		
+		StringTokenizer st;
 		for (int i = 0 ; i < p; i++) {
-			split = in.readLine().split(" ");
-			int level = Integer.parseInt(split[0]);
-			String nickname = split[1];	
+			st = new StringTokenizer(in.readLine(), " ");
+			int level = Integer.parseInt(st.nextToken());
+			String nickname = st.nextToken();	
 			entranceRoom(level, nickname); // 플레이어 입장 ~
 		}
 		
+		// 방 정보 출력
 		for (int i = 0; i < rooms.size(); i++) {
+			Collections.sort(rooms.get(i).players); // 플레이어 사전순으로 오름차순 정렬
 			if (rooms.get(i).players.size() != m) {
-				System.out.println("Waiting!");
+				sb.append("Waiting!\n");
+			}
+			else {
+				sb.append("Started!\n");
+			}
+			for (int j = 0; j < rooms.get(i).players.size(); j++) {
+				sb.append(rooms.get(i).players.get(j).level + " " + rooms.get(i).players.get(j).nickname + "\n");
 			}
 		}
+		System.out.println(sb);
 		
 	} // end main()
 	
@@ -73,18 +85,7 @@ public class Main_실버2_20006_랭킹전대기열 {
 			}
 		}
 		
-		if (check) { // 매칭 가능한 방을 찾아서 입장했다면
-			// 들어간 방의 정원이 꽉 찼는지 체크 후
-			if (rooms.get(i).players.size() == m)	 { // 꽉 찼으면 게임 시작				
-				Collections.sort(rooms.get(i).players); // 플레이어 사전순으로 오름차순 정렬
-				
-				System.out.println("Started!");
-				for (int j = 0; j < rooms.get(i).players.size(); j++) {
-					System.out.println(rooms.get(i).players.get(j).level + " " + rooms.get(i).players.get(j).nickname);
-				}
-			}
-		}
-		else { // 매칭이 가능한 방이 없다면
+		if (!check) { // 매칭이 가능한 방이 없다면
 			makeRoom(level, nickname); // 새로운 방을 만들고 플레이어 입장
 		}
 		
