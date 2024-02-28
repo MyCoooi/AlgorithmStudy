@@ -3,8 +3,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import com.sun.media.sound.AlawCodec;
-
+// dfs로 풀면 이미 방문한 곳의 time값이 제일 적은 게 아닐 수 있으므로
+// 이미 방문한 곳이라 하더라도 다시 탐색해야 한다.
+// 따라서 시간초과가 난다..
+// bfs로 풀기!!
 public class Solution_탈주범검거 {
 	static final int FOURWAYS = 1;
 	static final int UP_DOWN = 2;
@@ -19,17 +21,14 @@ public class Solution_탈주범검거 {
 	static int L; // L: 탈출 후 소요된 시간
 	static int map [][];
 	static boolean visited [][];
-	static int ans;
 	
 	static class Position {
 		int r, c;
-
 		public Position(int r, int c) {
 			super();
 			this.r = r;
 			this.c = c;
 		}
-		
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -48,7 +47,6 @@ public class Solution_탈주범검거 {
 			
 			map = new int[N][M];
 			visited = new boolean[N][M];
-			ans = 0;
 			
 			for (int i = 0; i < N; i++) {
 				split = in.readLine().split(" ");
@@ -57,46 +55,70 @@ public class Solution_탈주범검거 {
 				}
 			}
 			
-			dfs(new Position(R, C), 1);
+			bfs(new Position(R, C));
 			System.out.println("#" + testCase + " " + count());
 		} // end testCase iter
 	} // end main()
 	
-	public static void dfs(Position cur, int time) {
+	public static void bfs(Position start) {
+		Queue<Position> q = new ArrayDeque<>();
 		
-		visited[cur.r][cur.c] = true;
-		
-		// 기저 조건
-		if (time == L) return;
-		
-		int deltas [][] = {{-1,0},{1,0},{0,-1},{0,1}}; // 상, 하, 좌, 우
-		
-		for (int d = 0; d < 4; d++) {
-			int nr = cur.r + deltas[d][0];
-			int nc = cur.c + deltas[d][1];
+		q.offer(start);
+		visited[start.r][start.c] = true;
+		int time = 1;
+		while (time <= L && !q.isEmpty()) {
 			
-			if (!isIn(nr, nc) || visited[nr][nc]) return;
+			int size = q.size();
 			
-			if (d == 0 && map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == UP_DOWN
-					|| map[cur.r][cur.c] == UP_LEFT || map[cur.r][cur.c] == UP_RIGHT) { // 상
-				if (canGo_up(nr, nc)) dfs(new Position(nr, nc), time + 1);
-			}
-			if (d == 1 && map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == UP_DOWN
-					|| map[cur.r][cur.c] == DOWN_LEFT || map[cur.r][cur.c] == DOWN_RIGHT) { // 하
-				if (canGo_down(nr, nc)) dfs(new Position(nr, nc), time + 1);
-			}
-			if (d == 2 && map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == LEFT_RIGHT
-					|| map[cur.r][cur.c] == DOWN_LEFT || map[cur.r][cur.c] == UP_LEFT) { // 좌
-				if (canGo_left(nr, nc)) dfs(new Position(nr, nc), time + 1);
-			}
-			if (d == 3 && map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == LEFT_RIGHT
-					|| map[cur.r][cur.c] == DOWN_RIGHT || map[cur.r][cur.c] == UP_RIGHT) { // 우
-				if (canGo_right(nr, nc)) dfs(new Position(nr, nc), time + 1);
-			}
-		}
-		
-		
-	} // end dfs()
+			while (size > 0) {
+				Position cur = q.poll();
+				
+				// 시간이 L만큼 경과했으면 탐색 끝!(그 다음 노드의 시간은 L + 1일 것이므로)
+				if (time == L) return;
+				
+				// 연결된(갈 수 있는) 노드 큐에 삽입
+				int deltas [][] = {{-1,0},{1,0},{0,-1},{0,1}}; // 상, 하, 좌, 우
+				
+				for (int d = 0; d < 4; d++) {
+					int nr = cur.r + deltas[d][0];
+					int nc = cur.c + deltas[d][1];
+					
+					if (!isIn(nr, nc) || map[nr][nc] == 0 || visited[nr][nc]) continue;
+					
+					if (d == 0 && (map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == UP_DOWN
+							|| map[cur.r][cur.c] == UP_LEFT || map[cur.r][cur.c] == UP_RIGHT)) { // 상
+						if (canGo_up(nr, nc)) {
+							q.offer(new Position(nr, nc));
+							visited[nr][nc] = true;
+						}
+					}
+					if (d == 1 && (map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == UP_DOWN
+							|| map[cur.r][cur.c] == DOWN_LEFT || map[cur.r][cur.c] == DOWN_RIGHT)) { // 하
+						if (canGo_down(nr, nc)) {
+							q.offer(new Position(nr, nc));
+							visited[nr][nc] = true;
+						}
+					}
+					if (d == 2 && (map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == LEFT_RIGHT
+							|| map[cur.r][cur.c] == DOWN_LEFT || map[cur.r][cur.c] == UP_LEFT)) { // 좌
+						if (canGo_left(nr, nc)) {
+							q.offer(new Position(nr, nc));
+							visited[nr][nc] = true;
+						}
+					}
+					if (d == 3 && (map[cur.r][cur.c] == FOURWAYS || map[cur.r][cur.c] == LEFT_RIGHT
+							|| map[cur.r][cur.c] == DOWN_RIGHT || map[cur.r][cur.c] == UP_RIGHT)) { // 우
+						if (canGo_right(nr, nc)) {
+							q.offer(new Position(nr, nc));
+							visited[nr][nc] = true;
+						}
+					}
+				} // end for()
+				size--;
+			} // end while()
+			time++;
+		} // end while ()
+	} // end bfs()
 	
 	public static boolean canGo_right(int nr, int nc) {
 		if (map[nr][nc] == LEFT_RIGHT || map[nr][nc] == DOWN_LEFT
@@ -130,7 +152,9 @@ public class Solution_탈주범검거 {
 		int res = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
-				if (visited[i][j]) res++;
+				if (visited[i][j]) {
+					res++;
+				}
 			}
 		}
 		return res;
