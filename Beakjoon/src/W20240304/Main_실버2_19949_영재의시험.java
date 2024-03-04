@@ -11,10 +11,27 @@ public class Main_실버2_19949_영재의시험 {
 	
 	public static void main(String[] args) throws Exception {
 		input();
-		for (int i = 1; i <= 5; i++) dfs(0, i);
+		dfs(0, 0, 0, 0);
+		System.out.println(cnt);
 	}
 	
-	static void dfs(int pNumber, int ans) {
+	static void dfs(int pNumber, int curAns, int preAns, int score) {
+		
+		// 기저 조건
+		if (pNumber == N) {
+			if (score >= 5) cnt++;
+			return;
+		}
+		
+		// 유도 부분
+		for (int a = 1; a <= 5; a++) {
+			if (curAns == preAns && preAns == a) continue; // 3번 연속해서 같은 번호를 찍을 수 없다
+			
+			if (answer[pNumber] == a) {
+				dfs(pNumber + 1, a, curAns, score + 1);
+			}
+			else dfs(pNumber + 1, a, curAns, score);
+		}
 		
 	}
 	
