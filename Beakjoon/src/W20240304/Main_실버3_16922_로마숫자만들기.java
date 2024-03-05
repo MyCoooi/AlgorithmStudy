@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+// 시간초과..
 public class Main_실버3_16922_로마숫자만들기 {
 	static final int I = 0;
 	static final int V = 1;
