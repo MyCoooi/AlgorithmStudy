@@ -13,18 +13,30 @@ public class Main_실버3_16922_로마숫자만들기 {
 
 	static int N, ans; // N: 로마 숫자 개수 (1<=N<=20)
 	static int [] value = {1, 5, 10, 50};
+	static int [] cnt;
 	static ArrayList<Integer> list; 
 	
 	public static void main(String[] args) throws Exception {
 		input();
-		dfs(0, 0);
+		dfs(0, N);
 		System.out.println(ans);
 	}
 	
-	static void dfs(int cnt, int sum) {
+	static void dfs(int depth, int remain) {
 		// 기저조건
-		if (cnt == N) {
-			if (!find(sum)) {
+		if (depth == 4 || remain == 0) {
+			int sum = 0;
+			for (int i = 0; i < 4; i++) {
+				sum += (cnt[i] * value[i]);
+			}
+			boolean check = true;
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) == sum) {
+					check = false;
+					break;
+				}
+			}
+			if (check) {
 				list.add(sum);
 				ans++;
 			}
@@ -32,16 +44,19 @@ public class Main_실버3_16922_로마숫자만들기 {
 		}
 		
 		// 유도부분
-		for (int i = I; i <= L; i++) {
-			dfs(cnt + 1, sum + value[i]);
+		if (depth == 3) {
+			cnt[depth] = remain;
+			dfs(depth + 1, 0);
+			cnt[depth] = 0;
 		}
-	}
-	
-	static boolean find(int sum) {
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i) == sum) return true;
+		else {			
+			for (int i = 0; i <= remain; i++) {
+				cnt[depth] = i;
+				dfs(depth + 1, remain - i);
+				cnt[depth] = 0;
+			}
 		}
-		return false;
+		
 	}
 	
 	static void input() throws Exception {
@@ -50,5 +65,6 @@ public class Main_실버3_16922_로마숫자만들기 {
 		N = Integer.parseInt(in.readLine());
 		ans = 0;
 		list = new ArrayList<>();
+		cnt = new int[4];
 	}
 }
