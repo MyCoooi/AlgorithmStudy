@@ -2,22 +2,20 @@ package W20240311;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
+// fail
 public class Main_실버3_19637_IF문좀대신써줘 {
 	
 	static int N, M; // N: 칭호의 개수, M: 칭호를 출력해야 하는 캐릭터들의 개수
 	static int bounds []; // 칭호의 전투력
 	static String names []; // 칭호
 	static int characters [];
-	static int cnt = 0;
 	
 	public static void main(String[] args) throws Exception {
 		input();
 		for (int i = 0; i < M; i++) {
 			String ans = binarySearch(characters[i]);
 			System.out.println(ans);
-			System.out.println(cnt);
 		}
 	}
 	
@@ -33,10 +31,7 @@ public class Main_실버3_19637_IF문좀대신써줘 {
 			
 			int curBound = bounds[mid];
 			
-			if (curBound < tg) {
-				
-				start = mid + 1;
-			}
+			if (curBound < tg) start = mid + 1;
 			else { // curBound >= tg
 				if (value > curBound) {
 					value = curBound;
@@ -46,7 +41,6 @@ public class Main_실버3_19637_IF문좀대신써줘 {
 				
 				end = mid - 1;
 			}
-			cnt++;
 		}
 		
 		
