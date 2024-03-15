@@ -12,7 +12,6 @@ public class Main_골드4_1477_휴게소세우기 {
 	public static void main(String[] args) throws Exception {
 		input();
 		
-		
 	}
 	
 	static void input() throws Exception {
