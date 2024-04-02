@@ -2,7 +2,9 @@ package W20240401;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main_골드5_2800_괄호제거 {
 
@@ -18,7 +20,6 @@ public class Main_골드5_2800_괄호제거 {
 		
 		openBrackets = new ArrayList<>();
 		closeBrackets = new ArrayList<>();
-		printCheck = new boolean[input.length()];
 		
 		setting();
 		solve();
@@ -39,6 +40,7 @@ public class Main_골드5_2800_괄호제거 {
 			
 			// 2. 조합 찾기
 			do {
+				printCheck = new boolean[input.length()];
 				for (int i = 0; i < N; i++) {
 					if (flag[i] == 1) {
 						printCheck[openBrackets.get(i)] = true;
@@ -47,17 +49,40 @@ public class Main_골드5_2800_괄호제거 {
 				}
 				
 				// 결과물 출력 하기
-				print();
+				print(printCheck);
 			} while(np(flag));
 		}
 	}
 
 	private static boolean np(int[] flag) {
-		// TODO Auto-generated method stub
-		return false;
+		int N = flag.length - 1;
+		
+		// 꼭대기 위치 찾기
+		int i = N;
+		while(i > 0 && flag[i - 1] >= flag[i]) i--;
+		if (i == 0) return false;
+		
+		// 바꿀 값 위치 찾기
+		int j = N;
+		while(flag[i - 1] >= flag[j]) j--;
+		
+		// 바꾸기
+		swap(i - 1, j, flag);
+		
+		// i부터 끝까지 오름차순 정렬
+		int k = N;
+		while(i < k) swap(i++, k--, flag);
+		
+		return true;
 	}
 
-	private static void print() {
+	private static void swap(int i, int j, int arr []) {
+		int tmp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = tmp;
+	}
+
+	private static void print(boolean printCheck[]) {
 		for (int i = 0; i < input.length(); i++) {
 			if (!printCheck[i]) sb.append(input.charAt(i));
 		}
@@ -65,6 +90,7 @@ public class Main_골드5_2800_괄호제거 {
 	}
 
 	private static void setting() {
+		ArrayDeque<Integer> dq = new ArrayDeque<>();
 		for (int i = 0; i < input.length(); i++) {
 			char cur = input.charAt(i);
 			switch(cur) {
@@ -72,9 +98,13 @@ public class Main_골드5_2800_괄호제거 {
 				openBrackets.add(i);
 				break;
 			case ')':
-				closeBrackets.add(i);
+				dq.offerFirst(i);
 				break;
 			}
+		}
+		while(!dq.isEmpty()) {
+			int cur = dq.pollFirst();
+			closeBrackets.add(cur);
 		}
 	}
 }
