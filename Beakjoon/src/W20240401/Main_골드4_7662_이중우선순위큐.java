@@ -19,25 +19,53 @@ public class Main_골드4_7662_이중우선순위큐 {
 	static class DoubleQ {
 		PriorityQueue<Integer> max;
 		PriorityQueue<Integer> min;
+		HashMap<Integer, Integer> map;
 		public DoubleQ() {
 			super();
-			this.max = new PriorityQueue<>();
+			this.max = new PriorityQueue<>(new Comparator<Integer>() {
+				@Override
+				public int compare(Integer o1, Integer o2) {
+					return Integer.compare(o2, o1);
+				}
+			});
 			this.min = new PriorityQueue<>();
+			this.map = new HashMap<>();
 		}
 		public void insert(int n) {
-			
+			max.offer(n);
+			min.offer(n);
+			if (map.containsKey(n)) map.replace(n, map.get(n) + 1);
+			else map.put(n, 1);
 		}
 		public void deleteMax() {
-			
+			while(!max.isEmpty() && map.get(max.peek()) == 0) {
+				max.poll();
+			}
+			if (max.isEmpty()) return;
+			int n = max.poll();
+			map.replace(n, map.get(n) - 1);
 		}
 		public void deleteMin() {
-			
+			while(!min.isEmpty() && map.get(min.peek()) == 0) {
+				min.poll();
+			}
+			if (min.isEmpty()) return;
+			int n = min.poll();
+			map.replace(n, map.get(n) - 1);
 		}
-		public int getMin() {
-			
+		public Integer getMin() {
+			while(!min.isEmpty() && map.get(min.peek()) == 0) {
+				min.poll();
+			}
+			if (min.isEmpty()) return null;
+			else return min.peek();
 		}
-		public int getMax() {
-			
+		public Integer getMax() {
+			while(!max.isEmpty() && map.get(max.peek()) == 0) {
+				max.poll();
+			}
+			if (max.isEmpty()) return null;
+			else return max.peek();
 		}
 	}
 	
@@ -48,17 +76,15 @@ public class Main_골드4_7662_이중우선순위큐 {
 		int T = Integer.parseInt(in.readLine());
 		for (int tc = 1; tc <= T; tc++) {
 			K = Integer.parseInt(in.readLine());
-			
+			DoubleQ doubleQ = new DoubleQ();
 			for (int i = 0; i < K; i++) {
 				String split [] = in.readLine().split(" ");
 				char cmd = split[0].charAt(0); // 어떤 연산인지?
 				int n = Integer.parseInt(split[1]); // 연산의 타겟값
 				
-				DoubleQ doubleQ = new DoubleQ();
-				
 				if (cmd == 'I') doubleQ.insert(n);
 				else if (cmd == 'D' && n == MAXVALUE) doubleQ.deleteMax();
-				else doubleQ.deleteMin();
+				else if (cmd == 'D' && n == MINVALUE) doubleQ.deleteMin();
 			}
 			
 			Integer min = doubleQ.getMin();
