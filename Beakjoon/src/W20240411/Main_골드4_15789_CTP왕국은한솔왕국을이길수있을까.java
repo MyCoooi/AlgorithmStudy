@@ -29,11 +29,11 @@ public class Main_골드4_15789_CTP왕국은한솔왕국을이길수있을까 {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
 		StringTokenizer st = new StringTokenizer(in.readLine(), " ");
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
+		N = Integer.parseInt(st.nextToken()); // 왕국의 수
+		M = Integer.parseInt(st.nextToken()); // 동맹 관계의 수
 		
 		parent = new int[N + 1];
-		for (int i = 0; i <= N; i++) parent[i] = i; // make set
+		for (int i = 1; i <= N; i++) parent[i] = i; // make set
 		ans = 0;
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(in.readLine(), " ");
@@ -46,6 +46,7 @@ public class Main_골드4_15789_CTP왕국은한솔왕국을이길수있을까 {
 		C = Integer.parseInt(st.nextToken());
 		H = Integer.parseInt(st.nextToken());
 		K = Integer.parseInt(st.nextToken());
+		for (int i = 1; i <= N; i++) findSet(i);
 		solve();
 		System.out.println(ans);
 	}
@@ -60,7 +61,7 @@ public class Main_골드4_15789_CTP왕국은한솔왕국을이길수있을까 {
 		Iterator<Integer> keys = cnt.keySet().iterator();
 		while(keys.hasNext()) {
 			int key = keys.next();
-			if (key == parent[C]) continue;
+			if (key == parent[C]) continue; // CTP 왕국과 이미 동맹 관계에 있으면 다시 동맹을 맺을 필요가 없다
 			kingdoms.offer(new Kingdom(key, cnt.get(key)));
 		}
 		
@@ -89,10 +90,10 @@ public class Main_골드4_15789_CTP왕국은한솔왕국을이길수있을까 {
 			return parent[x] = findSet(parent[x]);
 	}
 	
-	static void printParent() {
-		System.out.println("!!!parent");
-		for (int i = 0; i <= N; i++) System.out.print(parent[i] + " ");
-		System.out.println("\n==========");
-	}
-	
+//	static void printParent() {
+//		System.out.println("!!!parent");
+//		for (int i = 0; i <= N; i++) System.out.print(parent[i] + " ");
+//		System.out.println("\n==========");
+//	}
+//	
 }
