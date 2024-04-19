@@ -1,3 +1,4 @@
+package a형연습;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Inet4Address;
